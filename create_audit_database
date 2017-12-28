@@ -1,8 +1,8 @@
 create table job (
 job_id int Primary Key,
-stream_id int,
-step_id smallint,
-implementation_id smallint,
+stream_id int references stream(stream_id),
+step_id smallint references step(step_id),
+implementation_id smallint references implementation(implementation),
 job_name varchar(50),
 version varchar(50),
 created_ts time [ (p) ] [ without time zone ]
