@@ -27,5 +27,57 @@ batch_job_id BIGINT PRIMARY KEY,
 batch_id INT REFERENCES batch(batch_id),
 job_id INT REFERENCES job(job_id),
 execution_guid uuid,
+start_ts TIME [ (p) ] [ WITHOUT TIME ZONE ],
+end_ts TIME [ (p) ] [ WITHOUT TIME ZONE ],
+end_status VARCHAR(10)
+)
 
+CREATE TABLE batch_job_interface (
+batch_job_interface_id BIGINT PRIMARY KEY,
+batch_job_id BIGINT REFERENCES batch_job(batch_job_id),
+interface_id BIGINT REFERENCES interface(interface_id),
+input_output_ts TIME [ (p) ] [ WITHOUT TIME ZONE ],
+input_output char(2)
+)
+
+CREATE TABLE interface (
+interface_id BIGINT PRIMARY KEY,
+interface_type VARCHAR(50),
+interface_name VARCHAR(50),
+modified_ts TIME [ (p) ] [ WITHOUT TIME ZONE ],
+interface_source VARCHAR(50),
+bytes BIGINT
+)
+
+CREATE TABLE batch (
+batch_id INT PRIMARY KEY,
+description VARCHAR(50),
+start_ts TIME [ (p) ] [ WITHOUT TIME ZONE ],
+end_ts TIME [ (p) ] [ WITHOUT TIME ZONE ]
+)
+
+CREATE TABLE etl_statistic(
+statistic_id BIGINT PRIMARY KEY,
+statistic_type VARCHAR(10),
+object_name VARCHAR(50),
+description VARCHAR(50),
+batch_job_id BIGINT REFERENCES batch_job
+statistic_ts TIME [ (p) ] [ WITHOUT TIME ZONE ],
+float_value float,
+int_value BIGINT
+)
+
+CREATE TABLE stream(
+stream_id INT PRIMARY KEY,
+subject_area_id INT,
+stream_name VARCHAR(50),
+stream_code CHAR(10),
+active BIT(1)
+)
+
+CREATE TABLE subject_area(
+subject_area_id INT PRIMARY KEY,
+subject_area_name VARCHAR(50),
+subject_area_code CHAR(5),
+active BIT(5)
 )
