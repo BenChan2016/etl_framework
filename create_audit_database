@@ -1,0 +1,9 @@
+create table job (
+job_id int Primary Key,
+stream_id int,
+step_id smallint,
+implementation_id smallint,
+job_name varchar(50),
+version varchar(50),
+created_ts time [ (p) ] [ without time zone ]
+ )
