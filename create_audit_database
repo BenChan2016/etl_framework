@@ -1,9 +1,31 @@
-create table job (
-job_id int Primary Key,
-stream_id int references stream(stream_id),
-step_id smallint references step(step_id),
-implementation_id smallint references implementation(implementation),
-job_name varchar(50),
-version varchar(50),
-created_ts time [ (p) ] [ without time zone ]
+CREATE TABLE job (
+job_id INT PRIMARY KEY,
+stream_id INT REFERENCES stream(stream_id),
+step_id SMALLINT REFERENCES step(step_id),
+implementation_id SMALLINT REFERENCES implementation(implementation_id),
+job_name VARCHAR(50),
+version VARCHAR(50),
+created_ts TIME [ (p) ] [ WITHOUT TIME ZONE ]
  )
+
+CREATE TABLE implementation (
+implementation_id SMALLINT PRIMARY KEY,
+description VARCHAR(50),
+file_extension char(10),
+active bit(1)
+)
+
+CREATE TABLE step(
+step_id SMALLINT,
+step_name VARCHAR(50),
+step_code CHAR(5),
+active bit(1)
+)
+
+CREATE TABLE batch_job (
+batch_job_id BIGINT PRIMARY KEY,
+batch_id INT REFERENCES batch(batch_id),
+job_id INT REFERENCES job(job_id),
+execution_guid uuid,
+
+)
