@@ -1,71 +1,5 @@
-CREATE TABLE job (
-job_id INT PRIMARY KEY,
-stream_id INT REFERENCES stream(stream_id),
-step_id SMALLINT REFERENCES step(step_id),
-implementation_id SMALLINT REFERENCES implementation(implementation_id),
-job_name VARCHAR(50),
-version VARCHAR(50),
-created_ts TIME [ (p) ] [ WITHOUT TIME ZONE ]
- )
 
-CREATE TABLE implementation (
-implementation_id SMALLINT PRIMARY KEY,
-description VARCHAR(50),
-file_extension char(10),
-active bit(1)
-)
 
-CREATE TABLE step(
-step_id SMALLINT,
-step_name VARCHAR(50),
-step_code CHAR(5),
-active bit(1)
-)
-
-CREATE TABLE batch_job (
-batch_job_id BIGINT PRIMARY KEY,
-batch_id INT REFERENCES batch(batch_id),
-job_id INT REFERENCES job(job_id),
-execution_guid uuid,
-start_ts TIME [ (p) ] [ WITHOUT TIME ZONE ],
-end_ts TIME [ (p) ] [ WITHOUT TIME ZONE ],
-end_status VARCHAR(10)
-)
-
-CREATE TABLE batch_job_interface (
-batch_job_interface_id BIGINT PRIMARY KEY,
-batch_job_id BIGINT REFERENCES batch_job(batch_job_id),
-interface_id BIGINT REFERENCES interface(interface_id),
-input_output_ts TIME [ (p) ] [ WITHOUT TIME ZONE ],
-input_output char(2)
-)
-
-CREATE TABLE interface (
-interface_id BIGINT PRIMARY KEY,
-interface_type VARCHAR(50),
-interface_name VARCHAR(50),
-modified_ts TIME [ (p) ] [ WITHOUT TIME ZONE ],
-interface_source VARCHAR(50),
-bytes BIGINT
-)
-
-CREATE TABLE batch (
-batch_id INT PRIMARY KEY,
-description VARCHAR(50),
-start_ts TIME [ (p) ] [ WITHOUT TIME ZONE ],
-end_ts TIME [ (p) ] [ WITHOUT TIME ZONE ]
-)
-
-CREATE TABLE etl_statistic(
-statistic_id BIGINT PRIMARY KEY,
-statistic_type VARCHAR(10),
-object_name VARCHAR(50),
-description VARCHAR(50),
-batch_job_id BIGINT REFERENCES batch_job
-statistic_ts TIME [ (p) ] [ WITHOUT TIME ZONE ],
-float_value float,
-int_value BIGINT
-)
 
 CREATE TABLE stream(
 stream_id INT PRIMARY KEY,
@@ -73,11 +7,99 @@ subject_area_id INT,
 stream_name VARCHAR(50),
 stream_code CHAR(10),
 active BIT(1)
-)
+);
+
 
 CREATE TABLE subject_area(
 subject_area_id INT PRIMARY KEY,
 subject_area_name VARCHAR(50),
 subject_area_code CHAR(5),
 active BIT(5)
-)
+);
+
+CREATE TABLE step(
+step_id SMALLINT PRIMARY KEY,
+step_name VARCHAR(50),
+step_code CHAR(5),
+active bit(1)
+);
+
+CREATE TABLE implementation (
+implementation_id SMALLINT PRIMARY KEY,
+description VARCHAR(50),
+file_extension char(10),
+active bit(1)
+);
+
+CREATE TABLE job (
+job_id INT PRIMARY KEY,
+stream_id INT REFERENCES stream(stream_id),
+step_id SMALLINT REFERENCES step(step_id),
+implementation_id SMALLINT REFERENCES implementation(implementation_id),
+job_name VARCHAR(50),
+version VARCHAR(50),
+created_ts TIME
+ );
+
+CREATE TABLE batch (
+batch_id INT PRIMARY KEY,
+description VARCHAR(50),
+start_ts TIME,
+end_ts TIME
+);
+
+CREATE TABLE batch_job (
+batch_job_id BIGINT PRIMARY KEY,
+batch_id INT REFERENCES batch(batch_id),
+job_id INT REFERENCES job(job_id),
+execution_guid uuid,
+start_ts TIME,
+end_ts TIME,
+end_status VARCHAR(10)
+);
+
+
+CREATE TABLE interface (
+interface_id BIGINT PRIMARY KEY,
+interface_type VARCHAR(50),
+interface_name VARCHAR(50),
+modified_ts TIME,
+interface_source VARCHAR(50),
+bytes BIGINT
+);
+
+CREATE TABLE batch_job_interface (
+batch_job_interface_id BIGINT PRIMARY KEY,
+batch_job_id BIGINT REFERENCES batch_job(batch_job_id),
+interface_id BIGINT REFERENCES interface(interface_id),
+input_output_ts TIME,
+input_output char(2)
+);
+
+CREATE TABLE interface (
+interface_id BIGINT PRIMARY KEY,
+interface_type VARCHAR(50),
+interface_name VARCHAR(50),
+modified_ts TIME,
+interface_source VARCHAR(50),
+bytes BIGINT
+);
+
+CREATE TABLE batch (
+batch_id INT PRIMARY KEY,
+description VARCHAR(50),
+start_ts TIME,
+end_ts TIME
+);
+
+CREATE TABLE etl_statistic(
+statistic_id BIGINT PRIMARY KEY,
+statistic_type VARCHAR(10),
+object_name VARCHAR(50),
+description VARCHAR(50),
+batch_job_id BIGINT REFERENCES batch_job
+statistic_ts TIME ,
+float_value float,
+int_value BIGINT
+);
+
