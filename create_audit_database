@@ -1,4 +1,13 @@
-
+DROP TABLE IF EXISTS stream;
+DROP TABLE IF EXISTS subject_area;
+DROP TABLE IF EXISTS step;
+DROP TABLE IF EXISTS implementation;
+DROP TABLE IF EXISTS job;
+DROP TABLE IF EXISTS batch;
+DROP TABLE IF EXISTS batch_job;
+DROP TABLE IF EXISTS interface;
+DROP TABLE IF EXISTS batch_job_interface;
+DROP TABLE IF EXISTS etl_statistic;
 
 
 CREATE TABLE stream(
@@ -76,21 +85,7 @@ input_output_ts TIME,
 input_output char(2)
 );
 
-CREATE TABLE interface (
-interface_id BIGINT PRIMARY KEY,
-interface_type VARCHAR(50),
-interface_name VARCHAR(50),
-modified_ts TIME,
-interface_source VARCHAR(50),
-bytes BIGINT
-);
 
-CREATE TABLE batch (
-batch_id INT PRIMARY KEY,
-description VARCHAR(50),
-start_ts TIME,
-end_ts TIME
-);
 
 CREATE TABLE etl_statistic(
 statistic_id BIGINT PRIMARY KEY,
