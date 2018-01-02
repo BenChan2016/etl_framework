@@ -92,9 +92,8 @@ statistic_id BIGINT PRIMARY KEY,
 statistic_type VARCHAR(10),
 object_name VARCHAR(50),
 description VARCHAR(50),
-batch_job_id BIGINT REFERENCES batch_job
+batch_job_id BIGINT REFERENCES batch_job,
 statistic_ts TIME ,
 float_value float,
 int_value BIGINT
 );
-
