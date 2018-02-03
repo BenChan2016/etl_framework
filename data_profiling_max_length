@@ -1,0 +1,30 @@
+DROP FUNCTION staging.data_profiling();
+CREATE FUNCTION staging.data_profiling() RETURNS VOID AS $$
+DECLARE
+    rec record;
+DECLARE
+    i int;
+DECLARE
+    j int := 1;
+BEGIN
+    FOR rec IN 
+	SELECT table_schema, table_name, column_name
+	FROM information_schema.columns 
+	WHERE table_schema = 'staging' and table_name IN ('book','company_depot','counterparty','counterparty_address','counterparty_charge_code','counterparty_contact','counterparty_investor_id','counterparty_ssi','counterparty_trading_limit','
+	depot_account','depot_nostro','depot_nostro_currency','depot_nostro_ssi','fx_rate','gloss_daily_trade','gloss_open_trade','gloss_open_trade_instruction_reason','gloss_price','gloss_settlement','instrument','instrument_cross_reference','instrument_payment_schedule','salesperson')
+	and column_name <> 'active'
+    LOOP
+	EXECUTE format('SELECT max(length(%I)) FROM %I.%I',
+            rec.column_name, rec.table_schema, rec.table_name) INTO j;
+        EXECUTE format ('INSERT INTO staging.data_profiling (table_name, column_name, max_length) VALUES($1, $2, $3)') USING rec.table_name, rec.column_name, j;
+    END LOOP;
+END;
+$$
+LANGUAGE plpgsql;
+
+CREATE TABLE staging.data_profiling (
+table_name VARCHAR(100),
+column_name VARCHAR (100),
+max_length int,
+current_data_type VARCHAR(10)
+)
