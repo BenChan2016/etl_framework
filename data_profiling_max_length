@@ -8,23 +8,33 @@ DECLARE
     j int := 1;
 BEGIN
     FOR rec IN 
-	SELECT table_schema, table_name, column_name
+	SELECT table_schema, table_name, column_name, numeric_scale, character_maximum_length, data_type
 	FROM information_schema.columns 
 	WHERE table_schema = 'staging' and table_name IN ('book','company_depot','counterparty','counterparty_address','counterparty_charge_code','counterparty_contact','counterparty_investor_id','counterparty_ssi','counterparty_trading_limit','
 	depot_account','depot_nostro','depot_nostro_currency','depot_nostro_ssi','fx_rate','gloss_daily_trade','gloss_open_trade','gloss_open_trade_instruction_reason','gloss_price','gloss_settlement','instrument','instrument_cross_reference','instrument_payment_schedule','salesperson')
 	and column_name <> 'active'
     LOOP
-	EXECUTE format('SELECT max(length(%I)) FROM %I.%I',
-            rec.column_name, rec.table_schema, rec.table_name) INTO j;
-        EXECUTE format ('INSERT INTO staging.data_profiling (table_name, column_name, max_length) VALUES($1, $2, $3)') USING rec.table_name, rec.column_name, j;
+	IF rec.column_name = 'active'THEN 
+		EXECUTE format ('INSERT INTO staging.data_profiling (table_name, column_name, landing_data_type, landing_character_length, his_data_type, his_character_length, his_numeric_scale) VALUES($1, $2, $3, $4, $5, "NA", $6)') 
+		USING rec.table_name, rec.column_name, rec.data_type, rec.character_maximum_length, rec.data_type, rec.numeric_scale;
+	ELSE
+		EXECUTE format('SELECT max(length(%I)) FROM %I.%I',
+		    rec.column_name, rec.table_schema, rec.table_name) INTO j;
+		EXECUTE format ('INSERT INTO staging.data_profiling (table_name, column_name, landing_data_type, landing_character_length, his_data_type, his_character_length, his_numeric_scale) VALUES($1, $2, $3, $4, $5, $6, $7)') 
+		USING rec.table_name, rec.column_name, rec.data_type, rec.character_maximum_length, rec.data_type, j, rec.numeric_scale;
+	END IF;
     END LOOP;
 END;
 $$
 LANGUAGE plpgsql;
 
+drop table staging.data_profiling;
 CREATE TABLE staging.data_profiling (
 table_name VARCHAR(100),
 column_name VARCHAR (100),
-max_length int,
-current_data_type VARCHAR(10)
+landing_data_type VARCHAR(100),
+landing_character_length int,
+his_data_type VARCHAR(100),
+his_character_length int,
+his_numeric_scale int
 )
