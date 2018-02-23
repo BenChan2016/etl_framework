@@ -1,0 +1,9 @@
+CREATE TABLE log_Exception (
+    Error_ID       integer PRIMARY KEY,
+    Job_Name     varchar(100),
+    Error_Type     varchar(100),
+Error_Msg     varchar(1000),
+Business_Key     varchar(100),
+businessdate   timestamp,
+etl_insertdate timestamp
+);
